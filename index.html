@@ -659,6 +659,14 @@
         "https://raw.githubusercontent.com/nabiledd007/NbPs/main/22.jpg",
         "https://raw.githubusercontent.com/nabiledd007/NbPs/main/23.jpg",
         "https://raw.githubusercontent.com/nabiledd007/NbPs/main/24.jpg"
+      ],
+      5: [
+        "https://raw.githubusercontent.com/nabiledd007/NbPs/main/25.gif",
+        "https://raw.githubusercontent.com/nabiledd007/NbPs/main/26.gif",
+        "https://raw.githubusercontent.com/nabiledd007/NbPs/main/27.gif",
+        "https://raw.githubusercontent.com/nabiledd007/NbPs/main/28.gif",
+        "https://raw.githubusercontent.com/nabiledd007/NbPs/main/29.gif",
+        "https://raw.githubusercontent.com/nabiledd007/NbPs/main/30.gif"
       ]
     };
 
@@ -746,8 +754,8 @@
         dice.style.animation = '';
         dice.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
         
-        // Set level (1-4 based on dice roll 1-6)
-        currentLevel = Math.min(4, Math.ceil(finalRoll / 1.5));
+        // Set level (1-5 based on dice roll 1-6)
+        currentLevel = Math.min(5, Math.ceil(finalRoll / 1.2));
         
         // Show game screen with selected level
         showGameScreen(currentLevel);
