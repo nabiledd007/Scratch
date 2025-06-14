@@ -127,6 +127,7 @@
       margin: 2rem 0;
       transform-style: preserve-3d;
       cursor: pointer;
+      transition: transform 0.5s ease;
     }
 
     .dice {
@@ -143,16 +144,20 @@
       width: 100%;
       height: 100%;
       background: white;
-      border: 2px solid #e0e0e0;
+      border: 3px solid var(--primary);
       border-radius: 15px;
       display: flex;
+      flex-direction: column;
       justify-content: center;
       align-items: center;
-      font-size: 3rem;
+      font-size: 1rem;
       font-weight: bold;
       color: var(--primary-dark);
       box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.1),
                   0 10px 25px rgba(0, 0, 0, 0.15);
+      text-align: center;
+      padding: 10px;
+      line-height: 1.3;
     }
 
     .dice-face::before {
@@ -161,7 +166,20 @@
       width: 100%;
       height: 100%;
       background: linear-gradient(135deg, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0.2) 100%);
-      border-radius: 13px;
+      border-radius: 12px;
+    }
+
+    .dice-number {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 5px;
+      color: var(--primary);
+    }
+
+    .dice-label {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
     }
 
     .dice-face:nth-child(1) { transform: rotateY(0deg) translateZ(75px); }
@@ -170,15 +188,6 @@
     .dice-face:nth-child(4) { transform: rotateX(-90deg) translateZ(75px); }
     .dice-face:nth-child(5) { transform: rotateY(-90deg) translateZ(75px); }
     .dice-face:nth-child(6) { transform: rotateY(180deg) translateZ(75px); }
-
-    .dice-dot {
-      width: 20px;
-      height: 20px;
-      background: var(--primary-dark);
-      border-radius: 50%;
-      position: absolute;
-      box-shadow: inset 2px 2px 4px rgba(0, 0, 0, 0.2);
-    }
 
     .level-info {
       margin-top: 2rem;
@@ -357,6 +366,12 @@
       100% { transform: rotateX(720deg) rotateY(360deg) rotateZ(180deg); }
     }
 
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+
     /* Responsive adjustments */
     @media (max-width: 992px) {
       .grid {
@@ -389,8 +404,12 @@
       }
       
       .dice-face {
-        font-size: 2.5rem;
+        font-size: 0.8rem;
         border-radius: 12px;
+      }
+      
+      .dice-number {
+        font-size: 2rem;
       }
       
       .dice-face:nth-child(1) { transform: rotateY(0deg) translateZ(60px); }
@@ -399,11 +418,6 @@
       .dice-face:nth-child(4) { transform: rotateX(-90deg) translateZ(60px); }
       .dice-face:nth-child(5) { transform: rotateY(-90deg) translateZ(60px); }
       .dice-face:nth-child(6) { transform: rotateY(180deg) translateZ(60px); }
-
-      .dice-dot {
-        width: 16px;
-        height: 16px;
-      }
       
       .grid {
         grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
@@ -441,8 +455,12 @@
       }
       
       .dice-face {
-        font-size: 2rem;
+        font-size: 0.7rem;
         border-radius: 10px;
+      }
+      
+      .dice-number {
+        font-size: 1.5rem;
       }
       
       .dice-face:nth-child(1) { transform: rotateY(0deg) translateZ(50px); }
@@ -451,11 +469,6 @@
       .dice-face:nth-child(4) { transform: rotateX(-90deg) translateZ(50px); }
       .dice-face:nth-child(5) { transform: rotateY(-90deg) translateZ(50px); }
       .dice-face:nth-child(6) { transform: rotateY(180deg) translateZ(50px); }
-
-      .dice-dot {
-        width: 12px;
-        height: 12px;
-      }
       
       .grid {
         grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
@@ -525,40 +538,28 @@
       <div class="dice-container">
         <div class="dice" id="dice">
           <div class="dice-face">
-            <div class="dice-dot" style="top: 20%; left: 20%;"></div>
-            <div class="dice-dot" style="bottom: 20%; right: 20%;"></div>
+            <div class="dice-number">1</div>
+            <div class="dice-label" id="level1Label">Basic</div>
           </div>
           <div class="dice-face">
-            <div class="dice-dot" style="top: 20%; left: 20%;"></div>
-            <div class="dice-dot" style="top: 50%; left: 50%; transform: translate(-50%, -50%);"></div>
-            <div class="dice-dot" style="bottom: 20%; right: 20%;"></div>
+            <div class="dice-number">2</div>
+            <div class="dice-label" id="level2Label">Easy</div>
           </div>
           <div class="dice-face">
-            <div class="dice-dot" style="top: 20%; left: 20%;"></div>
-            <div class="dice-dot" style="top: 50%; left: 50%; transform: translate(-50%, -50%);"></div>
-            <div class="dice-dot" style="bottom: 20%; right: 20%;"></div>
-            <div class="dice-dot" style="top: 20%; right: 20%;"></div>
+            <div class="dice-number">3</div>
+            <div class="dice-label" id="level3Label">Medium</div>
           </div>
           <div class="dice-face">
-            <div class="dice-dot" style="top: 20%; left: 20%;"></div>
-            <div class="dice-dot" style="top: 20%; right: 20%;"></div>
-            <div class="dice-dot" style="bottom: 20%; left: 20%;"></div>
-            <div class="dice-dot" style="bottom: 20%; right: 20%;"></div>
+            <div class="dice-number">4</div>
+            <div class="dice-label" id="level4Label">Hard</div>
           </div>
           <div class="dice-face">
-            <div class="dice-dot" style="top: 20%; left: 20%;"></div>
-            <div class="dice-dot" style="top: 20%; right: 20%;"></div>
-            <div class="dice-dot" style="bottom: 20%; left: 20%;"></div>
-            <div class="dice-dot" style="bottom: 20%; right: 20%;"></div>
-            <div class="dice-dot" style="top: 50%; left: 50%; transform: translate(-50%, -50%);"></div>
+            <div class="dice-number">5</div>
+            <div class="dice-label" id="level5Label">Expert</div>
           </div>
           <div class="dice-face">
-            <div class="dice-dot" style="top: 20%; left: 20%;"></div>
-            <div class="dice-dot" style="top: 20%; right: 20%;"></div>
-            <div class="dice-dot" style="bottom: 20%; left: 20%;"></div>
-            <div class="dice-dot" style="bottom: 20%; right: 20%;"></div>
-            <div class="dice-dot" style="top: 50%; left: 20%;"></div>
-            <div class="dice-dot" style="top: 50%; right: 20%;"></div>
+            <div class="dice-number">6</div>
+            <div class="dice-label" id="level6Label">Master</div>
           </div>
         </div>
       </div>
@@ -600,7 +601,9 @@
         selectedLevel: "Level",
         backBtn: "Back to Level Select",
         footer: "Enjoy this interactive dice and scratch challenge!",
-        creator: "Created by Imane el kanz"
+        creator: "Created by Imane el kanz",
+        levelLabels: ["Basic", "Easy", "Medium", "Hard", "Expert", "Master"],
+        rollMessage: "Rolling the dice..."
       },
       fr: {
         title: "Défi de Sélection de Niveau par Dé",
@@ -611,7 +614,9 @@
         selectedLevel: "Niveau",
         backBtn: "Retour à la sélection de niveau",
         footer: "Profitez de ce défi interactif de dé et de grattage!",
-        creator: "Créé par Imane el kanz"
+        creator: "Créé par Imane el kanz",
+        levelLabels: ["Basique", "Facile", "Moyen", "Difficile", "Expert", "Maître"],
+        rollMessage: "Lancer le dé..."
       },
       ar: {
         title: "تحدي اختيار المستوى بالنرد",
@@ -622,7 +627,9 @@
         selectedLevel: "المستوى",
         backBtn: "العودة إلى اختيار المستوى",
         footer: "استمتع بتحدي النرد والكشط التفاعلي هذا!",
-        creator: "من صنع إيمان الكنز"
+        creator: "من صنع إيمان الكنز",
+        levelLabels: ["مبتدئ", "سهل", "متوسط", "صعب", "خبير", "متمكن"],
+        rollMessage: "يتم رمي النرد..."
       }
     };
 
@@ -667,6 +674,14 @@
         "https://raw.githubusercontent.com/nabiledd007/NbPs/main/28.gif",
         "https://raw.githubusercontent.com/nabiledd007/NbPs/main/29.gif",
         "https://raw.githubusercontent.com/nabiledd007/NbPs/main/30.gif"
+      ],
+      6: [
+        "https://raw.githubusercontent.com/nabiledd007/NbPs/main/31.gif",
+        "https://raw.githubusercontent.com/nabiledd007/NbPs/main/32.gif",
+        "https://raw.githubusercontent.com/nabiledd007/NbPs/main/33.gif",
+        "https://raw.githubusercontent.com/nabiledd007/NbPs/main/34.gif",
+        "https://raw.githubusercontent.com/nabiledd007/NbPs/main/35.gif",
+        "https://raw.githubusercontent.com/nabiledd007/NbPs/main/36.gif"
       ]
     };
 
@@ -679,6 +694,16 @@
     const backBtn = document.getElementById('backBtn');
     const langButtons = document.querySelectorAll('.lang-btn');
     const creatorElement = document.querySelector('.creator');
+    const levelPrompt = document.getElementById('levelPrompt');
+    const levelLabels = [
+      document.getElementById('level1Label'),
+      document.getElementById('level2Label'),
+      document.getElementById('level3Label'),
+      document.getElementById('level4Label'),
+      document.getElementById('level5Label'),
+      document.getElementById('level6Label')
+    ];
+    
     let currentLevel = 1;
     let currentLanguage = 'en';
     let scratchCircles = [];
@@ -722,6 +747,11 @@
       document.getElementById('footerText').textContent = translations[lang].footer;
       creatorElement.textContent = translations[lang].creator;
       
+      // Update level labels on dice
+      levelLabels.forEach((label, index) => {
+        label.textContent = translations[lang].levelLabels[index];
+      });
+      
       // Update selected level text if game screen is visible
       if (gameScreen.style.display === 'flex') {
         selectedLevel.textContent = `${translations[lang].selectedLevel} ${currentLevel}`;
@@ -731,6 +761,10 @@
     function rollDice() {
       // Disable clicking during animation
       dice.style.pointerEvents = 'none';
+      
+      // Show rolling message
+      const originalPrompt = levelPrompt.textContent;
+      levelPrompt.textContent = translations[currentLanguage].rollMessage;
       
       // Random final rotation (1-6)
       const finalRoll = Math.floor(Math.random() * 6) + 1;
@@ -754,14 +788,17 @@
         dice.style.animation = '';
         dice.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
         
-        // Set level (1-5 based on dice roll 1-6)
-        currentLevel = Math.min(5, Math.ceil(finalRoll / 1.2));
+        // Set level (1-6 based on dice roll)
+        currentLevel = finalRoll;
         
         // Show game screen with selected level
         showGameScreen(currentLevel);
         
         // Re-enable dice clicking
         dice.style.pointerEvents = 'auto';
+        
+        // Restore original prompt
+        levelPrompt.textContent = originalPrompt;
       }, 1500);
     }
 
