@@ -3,10 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>3D Circle Scratch-off with Levels</title>
+  <title>Dice Level Select Scratch Challenge</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.5.0/css/flag-icon.min.css">
   <style>
     :root {
       --primary: #ff4d6d;
@@ -37,12 +38,46 @@
       flex-direction: column;
       align-items: center;
       perspective: 1000px;
+      overflow-x: hidden;
     }
 
     .container {
       width: 100%;
       max-width: 1200px;
       margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* Language Selector */
+    .language-selector {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      display: flex;
+      gap: 10px;
+      z-index: 1000;
+    }
+
+    .lang-btn {
+      width: 40px;
+      height: 30px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      overflow: hidden;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      transition: var(--transition);
+    }
+
+    .lang-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 5px 10px rgba(0,0,0,0.3);
+    }
+
+    .lang-btn.active {
+      box-shadow: 0 0 0 2px var(--primary);
     }
 
     header {
@@ -69,35 +104,102 @@
       line-height: 1.6;
     }
 
-    .level-selector {
+    /* Level Selection Screen */
+    .level-selection {
       display: flex;
-      justify-content: center;
-      gap: 1rem;
+      flex-direction: column;
+      align-items: center;
       margin: 2rem 0;
-      flex-wrap: wrap;
+      text-align: center;
     }
 
-    .level-btn {
-      padding: 0.8rem 1.5rem;
-      border: none;
-      border-radius: 50px;
-      background: linear-gradient(145deg, #ffffff, #e6e6e6);
-      box-shadow: 5px 5px 10px #d9d9d9, -5px -5px 10px #ffffff;
+    .level-prompt {
+      font-size: 1.5rem;
+      margin-bottom: 1.5rem;
       color: var(--primary-dark);
       font-weight: 600;
+    }
+
+    .dice-container {
+      position: relative;
+      width: 150px;
+      height: 150px;
+      margin: 2rem 0;
+      transform-style: preserve-3d;
       cursor: pointer;
-      transition: var(--transition);
     }
 
-    .level-btn:hover {
-      transform: translateY(-3px);
-      box-shadow: 8px 8px 15px #d9d9d9, -8px -8px 15px #ffffff;
+    .dice {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      transform-style: preserve-3d;
+      transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg);
+      transition: transform 1s ease-out;
     }
 
-    .level-btn.active {
-      background: linear-gradient(145deg, var(--primary), var(--primary-dark));
-      color: white;
-      box-shadow: inset 3px 3px 5px rgba(0, 0, 0, 0.1);
+    .dice-face {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background: white;
+      border: 2px solid #e0e0e0;
+      border-radius: 15px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 3rem;
+      font-weight: bold;
+      color: var(--primary-dark);
+      box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.1),
+                  0 10px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .dice-face::before {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0.2) 100%);
+      border-radius: 13px;
+    }
+
+    .dice-face:nth-child(1) { transform: rotateY(0deg) translateZ(75px); }
+    .dice-face:nth-child(2) { transform: rotateY(90deg) translateZ(75px); }
+    .dice-face:nth-child(3) { transform: rotateX(90deg) translateZ(75px); }
+    .dice-face:nth-child(4) { transform: rotateX(-90deg) translateZ(75px); }
+    .dice-face:nth-child(5) { transform: rotateY(-90deg) translateZ(75px); }
+    .dice-face:nth-child(6) { transform: rotateY(180deg) translateZ(75px); }
+
+    .dice-dot {
+      width: 20px;
+      height: 20px;
+      background: var(--primary-dark);
+      border-radius: 50%;
+      position: absolute;
+      box-shadow: inset 2px 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .level-info {
+      margin-top: 2rem;
+      font-size: 1.1rem;
+      color: var(--gray);
+      max-width: 500px;
+    }
+
+    /* Game Screen (initially hidden) */
+    .game-screen {
+      display: none;
+      width: 100%;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .selected-level {
+      font-size: 1.5rem;
+      color: var(--primary-dark);
+      margin-bottom: 1.5rem;
+      font-weight: 600;
     }
 
     .instructions {
@@ -110,7 +212,6 @@
       display: flex;
       align-items: center;
       gap: 1rem;
-      animation: slideUp 0.6s ease-out 0.2s both;
       border: 1px solid rgba(255, 255, 255, 0.2);
     }
 
@@ -232,12 +333,38 @@
       transform: scale(1.1);
     }
 
+    .back-btn {
+      margin-top: 2rem;
+      padding: 0.8rem 1.5rem;
+      border: none;
+      border-radius: 50px;
+      background: linear-gradient(145deg, var(--primary), var(--primary-dark));
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      box-shadow: var(--shadow);
+    }
+
+    .back-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-hover);
+    }
+
     footer {
       margin-top: 3rem;
       text-align: center;
       color: var(--gray);
       font-size: 1rem;
-      animation: fadeIn 0.8s ease-out 0.4s both;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .creator {
+      margin-top: 1rem;
+      font-style: italic;
+      color: var(--primary-dark);
     }
 
     @keyframes fadeIn {
@@ -245,15 +372,9 @@
       to { opacity: 1; }
     }
 
-    @keyframes slideUp {
-      from { 
-        opacity: 0;
-        transform: translateY(30px);
-      }
-      to { 
-        opacity: 1;
-        transform: translateY(0);
-      }
+    @keyframes diceRoll {
+      0% { transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg); }
+      100% { transform: rotateX(720deg) rotateY(360deg) rotateZ(180deg); }
     }
 
     /* Responsive adjustments */
@@ -282,6 +403,28 @@
         font-size: 1rem;
       }
       
+      .dice-container {
+        width: 120px;
+        height: 120px;
+      }
+      
+      .dice-face {
+        font-size: 2.5rem;
+        border-radius: 12px;
+      }
+      
+      .dice-face:nth-child(1) { transform: rotateY(0deg) translateZ(60px); }
+      .dice-face:nth-child(2) { transform: rotateY(90deg) translateZ(60px); }
+      .dice-face:nth-child(3) { transform: rotateX(90deg) translateZ(60px); }
+      .dice-face:nth-child(4) { transform: rotateX(-90deg) translateZ(60px); }
+      .dice-face:nth-child(5) { transform: rotateY(-90deg) translateZ(60px); }
+      .dice-face:nth-child(6) { transform: rotateY(180deg) translateZ(60px); }
+
+      .dice-dot {
+        width: 16px;
+        height: 16px;
+      }
+      
       .grid {
         grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
         gap: 1.2rem;
@@ -304,6 +447,11 @@
         bottom: 1rem;
         right: 1rem;
       }
+
+      .language-selector {
+        top: 10px;
+        right: 10px;
+      }
     }
 
     @media (max-width: 480px) {
@@ -315,6 +463,28 @@
         font-size: 2rem;
       }
       
+      .dice-container {
+        width: 100px;
+        height: 100px;
+      }
+      
+      .dice-face {
+        font-size: 2rem;
+        border-radius: 10px;
+      }
+      
+      .dice-face:nth-child(1) { transform: rotateY(0deg) translateZ(50px); }
+      .dice-face:nth-child(2) { transform: rotateY(90deg) translateZ(50px); }
+      .dice-face:nth-child(3) { transform: rotateX(90deg) translateZ(50px); }
+      .dice-face:nth-child(4) { transform: rotateX(-90deg) translateZ(50px); }
+      .dice-face:nth-child(5) { transform: rotateY(-90deg) translateZ(50px); }
+      .dice-face:nth-child(6) { transform: rotateY(180deg) translateZ(50px); }
+
+      .dice-dot {
+        width: 12px;
+        height: 12px;
+      }
+      
       .grid {
         grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
         gap: 1rem;
@@ -324,49 +494,166 @@
         width: 100px;
         height: 100px;
       }
-      
-      .level-selector {
-        gap: 0.5rem;
+
+      .language-selector {
+        position: static;
+        margin-bottom: 1rem;
+        justify-content: center;
       }
-      
-      .level-btn {
-        padding: 0.6rem 1rem;
-        font-size: 0.9rem;
+    }
+
+    /* RTL support for Arabic */
+    body[dir="rtl"] {
+      direction: rtl;
+    }
+
+    body[dir="rtl"] .language-selector {
+      right: auto;
+      left: 20px;
+    }
+
+    @media (max-width: 768px) {
+      body[dir="rtl"] .language-selector {
+        right: auto;
+        left: 10px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      body[dir="rtl"] .language-selector {
+        right: auto;
+        left: auto;
       }
     }
   </style>
 </head>
 <body>
   <div class="container">
+    <!-- Language Selector -->
+    <div class="language-selector">
+      <button class="lang-btn active" data-lang="en">
+        <span class="flag-icon flag-icon-gb"></span>
+      </button>
+      <button class="lang-btn" data-lang="fr">
+        <span class="flag-icon flag-icon-fr"></span>
+      </button>
+      <button class="lang-btn" data-lang="ar">
+        <span class="flag-icon flag-icon-sa"></span>
+      </button>
+    </div>
+
     <header>
-      <h1>3D Scratch Challenge</h1>
-      <p class="subtitle">Select a level and scratch to reveal the hidden images</p>
+      <h1 id="title">Dice Level Select Challenge</h1>
+      <p class="subtitle" id="subtitle">Roll the dice to select your level, then scratch to reveal</p>
     </header>
 
-    <div class="level-selector">
-      <button class="level-btn active" data-level="1">Level 1</button>
-      <button class="level-btn" data-level="2">Level 2</button>
-      <button class="level-btn" data-level="3">Level 3</button>
-      <button class="level-btn" data-level="4">Level 4</button>
+    <!-- Level Selection Screen -->
+    <div class="level-selection" id="levelSelection">
+      <div class="level-prompt" id="levelPrompt">Roll the dice to select your level</div>
+      <div class="dice-container">
+        <div class="dice" id="dice">
+          <div class="dice-face">
+            <div class="dice-dot" style="top: 20%; left: 20%;"></div>
+            <div class="dice-dot" style="bottom: 20%; right: 20%;"></div>
+          </div>
+          <div class="dice-face">
+            <div class="dice-dot" style="top: 20%; left: 20%;"></div>
+            <div class="dice-dot" style="top: 50%; left: 50%; transform: translate(-50%, -50%);"></div>
+            <div class="dice-dot" style="bottom: 20%; right: 20%;"></div>
+          </div>
+          <div class="dice-face">
+            <div class="dice-dot" style="top: 20%; left: 20%;"></div>
+            <div class="dice-dot" style="top: 50%; left: 50%; transform: translate(-50%, -50%);"></div>
+            <div class="dice-dot" style="bottom: 20%; right: 20%;"></div>
+            <div class="dice-dot" style="top: 20%; right: 20%;"></div>
+          </div>
+          <div class="dice-face">
+            <div class="dice-dot" style="top: 20%; left: 20%;"></div>
+            <div class="dice-dot" style="top: 20%; right: 20%;"></div>
+            <div class="dice-dot" style="bottom: 20%; left: 20%;"></div>
+            <div class="dice-dot" style="bottom: 20%; right: 20%;"></div>
+          </div>
+          <div class="dice-face">
+            <div class="dice-dot" style="top: 20%; left: 20%;"></div>
+            <div class="dice-dot" style="top: 20%; right: 20%;"></div>
+            <div class="dice-dot" style="bottom: 20%; left: 20%;"></div>
+            <div class="dice-dot" style="bottom: 20%; right: 20%;"></div>
+            <div class="dice-dot" style="top: 50%; left: 50%; transform: translate(-50%, -50%);"></div>
+          </div>
+          <div class="dice-face">
+            <div class="dice-dot" style="top: 20%; left: 20%;"></div>
+            <div class="dice-dot" style="top: 20%; right: 20%;"></div>
+            <div class="dice-dot" style="bottom: 20%; left: 20%;"></div>
+            <div class="dice-dot" style="bottom: 20%; right: 20%;"></div>
+            <div class="dice-dot" style="top: 50%; left: 20%;"></div>
+            <div class="dice-dot" style="top: 50%; right: 20%;"></div>
+          </div>
+        </div>
+      </div>
+      <div class="level-info" id="levelInfo">
+        Each number on the dice corresponds to a different level with unique images to discover!
+      </div>
     </div>
 
-    <div class="instructions">
-      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="12" cy="12" r="10"></circle>
-        <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
-        <line x1="12" y1="17" x2="12.01" y2="17"></line>
-      </svg>
-      <p>Use your finger or mouse to scratch off the gray layer and reveal the image</p>
+    <!-- Game Screen (initially hidden) -->
+    <div class="game-screen" id="gameScreen">
+      <div class="selected-level" id="selectedLevel">Level 1</div>
+      <div class="instructions">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+          <line x1="12" y1="17" x2="12.01" y2="17"></line>
+        </svg>
+        <p id="instructionsText">Scratch the circles to reveal the hidden images</p>
+      </div>
+      <div class="grid" id="grid"></div>
+      <button class="back-btn" id="backBtn">Back to Level Select</button>
     </div>
-
-    <div class="grid" id="grid"></div>
 
     <footer>
-      <p>Enjoy this interactive 3D scratching experience with multiple levels</p>
+      <p id="footerText">Enjoy this interactive dice and scratch challenge!</p>
+      <div class="creator">Created by Imane el kanz</div>
     </footer>
   </div>
 
   <script>
+    // Language translations
+    const translations = {
+      en: {
+        title: "Dice Level Select Challenge",
+        subtitle: "Roll the dice to select your level, then scratch to reveal",
+        levelPrompt: "Roll the dice to select your level",
+        levelInfo: "Each number on the dice corresponds to a different level with unique images to discover!",
+        instructions: "Scratch the circles to reveal the hidden images",
+        selectedLevel: "Level",
+        backBtn: "Back to Level Select",
+        footer: "Enjoy this interactive dice and scratch challenge!",
+        creator: "Created by Imane el kanz"
+      },
+      fr: {
+        title: "Défi de Sélection de Niveau par Dé",
+        subtitle: "Lancez le dé pour sélectionner votre niveau, puis grattez pour révéler",
+        levelPrompt: "Lancez le dé pour sélectionner votre niveau",
+        levelInfo: "Chaque numéro sur le dé correspond à un niveau différent avec des images uniques à découvrir!",
+        instructions: "Grattez les cercles pour révéler les images cachées",
+        selectedLevel: "Niveau",
+        backBtn: "Retour à la sélection de niveau",
+        footer: "Profitez de ce défi interactif de dé et de grattage!",
+        creator: "Créé par Imane el kanz"
+      },
+      ar: {
+        title: "تحدي اختيار المستوى بالنرد",
+        subtitle: "قم برمي النرد لتحديد مستواك، ثم اكشط للكشف",
+        levelPrompt: "قم برمي النرد لتحديد مستواك",
+        levelInfo: "كل رقم على النرد يتوافق مع مستوى مختلف يحتوي على صور فريدة لاكتشافها!",
+        instructions: "اكشط الدوائر للكشف عن الصور المخفية",
+        selectedLevel: "المستوى",
+        backBtn: "العودة إلى اختيار المستوى",
+        footer: "استمتع بتحدي النرد والكشط التفاعلي هذا!",
+        creator: "من صنع إيمان الكنز"
+      }
+    };
+
     // Image sets for each level
     const imageSets = {
       1: [
@@ -403,26 +690,112 @@
       ]
     };
 
+    // DOM elements
+    const levelSelection = document.getElementById('levelSelection');
+    const gameScreen = document.getElementById('gameScreen');
+    const dice = document.getElementById('dice');
     const grid = document.getElementById('grid');
-    const levelButtons = document.querySelectorAll('.level-btn');
+    const selectedLevel = document.getElementById('selectedLevel');
+    const backBtn = document.getElementById('backBtn');
+    const langButtons = document.querySelectorAll('.lang-btn');
+    const creatorElement = document.querySelector('.creator');
     let currentLevel = 1;
+    let currentLanguage = 'en';
     let scratchCircles = [];
 
-    // Initialize with level 1
-    loadLevel(1);
+    // Initialize with English
+    setLanguage('en');
 
-    // Level selection event listeners
-    levelButtons.forEach(button => {
+    // Language button events
+    langButtons.forEach(button => {
       button.addEventListener('click', () => {
-        const level = parseInt(button.dataset.level);
-        if (level !== currentLevel) {
-          levelButtons.forEach(btn => btn.classList.remove('active'));
+        const lang = button.dataset.lang;
+        if (lang !== currentLanguage) {
+          langButtons.forEach(btn => btn.classList.remove('active'));
           button.classList.add('active');
-          currentLevel = level;
-          loadLevel(level);
+          currentLanguage = lang;
+          setLanguage(lang);
         }
       });
     });
+
+    // Dice click event
+    dice.addEventListener('click', rollDice);
+
+    // Back button event
+    backBtn.addEventListener('click', () => {
+      gameScreen.style.display = 'none';
+      levelSelection.style.display = 'flex';
+    });
+
+    function setLanguage(lang) {
+      // Set document direction for RTL languages
+      document.body.dir = lang === 'ar' ? 'rtl' : 'ltr';
+      
+      // Update all text elements
+      document.getElementById('title').textContent = translations[lang].title;
+      document.getElementById('subtitle').textContent = translations[lang].subtitle;
+      document.getElementById('levelPrompt').textContent = translations[lang].levelPrompt;
+      document.getElementById('levelInfo').textContent = translations[lang].levelInfo;
+      document.getElementById('instructionsText').textContent = translations[lang].instructions;
+      document.getElementById('backBtn').textContent = translations[lang].backBtn;
+      document.getElementById('footerText').textContent = translations[lang].footer;
+      creatorElement.textContent = translations[lang].creator;
+      
+      // Update selected level text if game screen is visible
+      if (gameScreen.style.display === 'flex') {
+        selectedLevel.textContent = `${translations[lang].selectedLevel} ${currentLevel}`;
+      }
+    }
+
+    function rollDice() {
+      // Disable clicking during animation
+      dice.style.pointerEvents = 'none';
+      
+      // Random final rotation (1-6)
+      const finalRoll = Math.floor(Math.random() * 6) + 1;
+      
+      // Calculate rotation based on dice face
+      let rotateX, rotateY;
+      switch(finalRoll) {
+        case 1: rotateX = 0; rotateY = 0; break;
+        case 2: rotateX = 0; rotateY = 90; break;
+        case 3: rotateX = 90; rotateY = 0; break;
+        case 4: rotateX = -90; rotateY = 0; break;
+        case 5: rotateX = 0; rotateY = -90; break;
+        case 6: rotateX = 0; rotateY = 180; break;
+      }
+      
+      // Animate dice roll
+      dice.style.animation = 'diceRoll 1.5s ease-out';
+      
+      // After animation completes
+      setTimeout(() => {
+        dice.style.animation = '';
+        dice.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+        
+        // Set level (1-4 based on dice roll 1-6)
+        currentLevel = Math.min(4, Math.ceil(finalRoll / 1.5));
+        
+        // Show game screen with selected level
+        showGameScreen(currentLevel);
+        
+        // Re-enable dice clicking
+        dice.style.pointerEvents = 'auto';
+      }, 1500);
+    }
+
+    function showGameScreen(level) {
+      // Update selected level text
+      selectedLevel.textContent = `${translations[currentLanguage].selectedLevel} ${level}`;
+      
+      // Switch screens
+      levelSelection.style.display = 'none';
+      gameScreen.style.display = 'flex';
+      
+      // Load the level
+      loadLevel(level);
+    }
 
     function loadLevel(level) {
       // Clear existing circles
