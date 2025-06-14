@@ -293,26 +293,6 @@
       transform: translateZ(15px);
     }
 
-    .circle-number {
-      position: absolute;
-      bottom: 1.2rem;
-      right: 1.2rem;
-      background: rgba(0, 0, 0, 0.7);
-      color: white;
-      width: 32px;
-      height: 32px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 50%;
-      font-weight: 600;
-      font-size: 0.9rem;
-      z-index: 10;
-      pointer-events: none;
-      transform: translateZ(20px);
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    }
-
     .circle-border {
       position: absolute;
       top: -5px;
@@ -438,14 +418,6 @@
       .instructions {
         flex-direction: column;
         text-align: center;
-      }
-      
-      .circle-number {
-        width: 28px;
-        height: 28px;
-        font-size: 0.8rem;
-        bottom: 1rem;
-        right: 1rem;
       }
 
       .language-selector {
@@ -657,7 +629,7 @@
     // Image sets for each level
     const imageSets = {
       1: [
-        "https://raw.githubusercontent.com/nabiledd007/NbPs/main/1.gif",
+        "https://raw.githubusercontent.com/nabiledd007/NbPs/main/1.jpg",
         "https://raw.githubusercontent.com/nabiledd007/NbPs/main/2.jpg",
         "https://raw.githubusercontent.com/nabiledd007/NbPs/main/3.jpg",
         "https://raw.githubusercontent.com/nabiledd007/NbPs/main/4.jpg",
@@ -804,11 +776,11 @@
 
       // Create new circles for the selected level
       imageSets[level].forEach((imgURL, index) => {
-        createScratchCircle(imgURL, index + 1);
+        createScratchCircle(imgURL);
       });
     }
 
-    function createScratchCircle(imgURL, number) {
+    function createScratchCircle(imgURL) {
       const circle = document.createElement('div');
       circle.className = 'scratch-circle';
 
@@ -819,7 +791,7 @@
       content.className = 'circle-content';
       const img = document.createElement('img');
       img.src = imgURL;
-      img.alt = `Image ${number}`;
+      img.alt = '';
       img.loading = "lazy";
       content.appendChild(img);
 
@@ -830,10 +802,6 @@
       canvas.width = 300;
       canvas.height = 300;
 
-      const numberBadge = document.createElement('div');
-      numberBadge.className = 'circle-number';
-      numberBadge.textContent = number;
-
       const border = document.createElement('div');
       border.className = 'circle-border';
 
@@ -842,7 +810,6 @@
       container.appendChild(scratchLayer);
       container.appendChild(border);
       circle.appendChild(container);
-      circle.appendChild(numberBadge);
       grid.appendChild(circle);
 
       const ctx = canvas.getContext('2d');
