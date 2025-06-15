@@ -690,6 +690,30 @@
         "https://raw.githubusercontent.com/nabiledd007/NbPs/main/40.gif",
         "https://raw.githubusercontent.com/nabiledd007/NbPs/main/41.gif",
         "https://raw.githubusercontent.com/nabiledd007/NbPs/main/42.gif"
+      ],
+      8: [
+        "https://raw.githubusercontent.com/nabiledd007/NbPs/main/43.gif",
+        "https://raw.githubusercontent.com/nabiledd007/NbPs/main/44.gif",
+        "https://raw.githubusercontent.com/nabiledd007/NbPs/main/45.gif",
+        "https://raw.githubusercontent.com/nabiledd007/NbPs/main/46.gif",
+        "https://raw.githubusercontent.com/nabiledd007/NbPs/main/47.gif",
+        "https://raw.githubusercontent.com/nabiledd007/NbPs/main/48.gif"
+      ],
+      9: [
+        "https://raw.githubusercontent.com/nabiledd007/NbPs/main/50.gif",
+        "https://raw.githubusercontent.com/nabiledd007/NbPs/main/51.gif",
+        "https://raw.githubusercontent.com/nabiledd007/NbPs/main/52.gif",
+        "https://raw.githubusercontent.com/nabiledd007/NbPs/main/53.gif",
+        "https://raw.githubusercontent.com/nabiledd007/NbPs/main/54.gif",
+        "https://raw.githubusercontent.com/nabiledd007/NbPs/main/49.gif"
+      ],
+      10: [
+        "https://raw.githubusercontent.com/nabiledd007/NbPs/main/57.gif",
+        "https://raw.githubusercontent.com/nabiledd007/NbPs/main/58.gif",
+        "https://raw.githubusercontent.com/nabiledd007/NbPs/main/59.gif",
+        "https://raw.githubusercontent.com/nabiledd007/NbPs/main/60.gif",
+        "https://raw.githubusercontent.com/nabiledd007/NbPs/main/61.gif",
+        "https://raw.githubusercontent.com/nabiledd007/NbPs/main/62.gif"
       ]
     };
 
@@ -774,8 +798,8 @@
       const originalPrompt = levelPrompt.textContent;
       levelPrompt.textContent = translations[currentLanguage].rollMessage;
       
-      // Random final rotation (1-7)
-      const finalRoll = Math.floor(Math.random() * 7) + 1;
+      // Random final rotation (1-10)
+      const finalRoll = Math.floor(Math.random() * 10) + 1;
       
       // Calculate rotation based on dice face
       let rotateX, rotateY;
@@ -786,8 +810,8 @@
         case 4: rotateX = -90; rotateY = 0; break;
         case 5: rotateX = 0; rotateY = -90; break;
         case 6: rotateX = 0; rotateY = 180; break;
-        case 7: 
-          // For level 7, we'll use a random face since dice only has 6 faces
+        default: 
+          // For levels 7-10, use random rotations since dice only has 6 faces
           rotateX = Math.random() > 0.5 ? 180 : 0;
           rotateY = Math.random() * 360;
           break;
@@ -801,7 +825,7 @@
         dice.style.animation = '';
         dice.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
         
-        // Set level (1-7 based on dice roll)
+        // Set level (1-10 based on dice roll)
         currentLevel = finalRoll;
         
         // Show game screen with selected level
